@@ -26,17 +26,22 @@ Every neuron runs as its own thread within its layer's process. Inter-neuron com
 
 ## Architecture
 
-```
-Input Layer (Process 0)          Hidden Layer (Process 1)         Output Layer (Process 2)
-┌─────────────────────────┐      ┌─────────────────────────┐      ┌──────────────────┐
-│  Thread 0  │  Thread 1  │ ───▶ │  Thread 0  │  Thread 1  │ ───▶ │    Thread 0      │
-│  Neuron 0  │  Neuron 1  │      │  Neuron 0  │  Neuron 1  │      │    Output        │
-└─────────────────────────┘      └─────────────────────────┘      └──────────────────┘
-       │ weighted connections            │ weighted connections
-       │ (inter-thread sync)             │ (inter-thread sync)
-       ▼                                 ▼
-  Shared weights                   Shared weights
-  loaded from weights.csv          loaded from weights.csv
+```mermaid
+graph LR
+    subgraph P0["Process 0 — input layer"]
+        T00["Thread 0 · Neuron 0"]
+        T01["Thread 1 · Neuron 1"]
+        T02["Thread 2 · Neuron 2"]
+    end
+    subgraph P1["Process 1 — hidden layer"]
+        T10["Thread 0 · Neuron 0"]
+        T11["Thread 1 · Neuron 1"]
+    end
+    subgraph P2["Process 2 — output layer"]
+        T20["Thread 0 · Output"]
+    end
+    P0 -->|"IPC · activations"| P1
+    P1 -->|"IPC · activations"| P2
 ```
 
 **Each process** owns one layer and manages its neurons as a thread pool.  
