@@ -1,4 +1,4 @@
-Multi-Core Neural Network in C++
+# Multi-Core Neural Network in C++
 
 > **A neural network where every layer is a process and every neuron is a thread** — built from scratch in C++ using POSIX multi-processing and multi-threading.
 
