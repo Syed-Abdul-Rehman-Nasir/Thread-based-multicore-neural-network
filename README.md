@@ -27,21 +27,28 @@ Every neuron runs as its own thread within its layer's process. Inter-neuron com
 ## Architecture
 
 ```mermaid
-graph LR
-    subgraph P0["Process 0 — input layer"]
+graph TD
+    subgraph P0["Process 0 — Input Layer"]
         T00["Thread 0 · Neuron 0"]
         T01["Thread 1 · Neuron 1"]
         T02["Thread 2 · Neuron 2"]
     end
-    subgraph P1["Process 1 — hidden layer"]
+
+    subgraph P1["Process 1 — Hidden Layer"]
         T10["Thread 0 · Neuron 0"]
         T11["Thread 1 · Neuron 1"]
     end
-    subgraph P2["Process 2 — output layer"]
+
+    subgraph P2["Process 2 — Output Layer"]
         T20["Thread 0 · Output"]
     end
-    P0 -->|"IPC · activations"| P1
-    P1 -->|"IPC · activations"| P2
+
+    T00 --> T10
+    T01 --> T10
+    T02 --> T11
+
+    T10 --> T20
+    T11 --> T20
 ```
 
 **Each process** owns one layer and manages its neurons as a thread pool.  
